@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Balance } from './components/Balance';
 import { IncomeExpenses } from './components/IncomeExpenses';
@@ -7,18 +7,43 @@ import { AddTransaction } from './components/AddTransaction';
 
 import './App.css';
 
-function App() {
+const App = () => {
 
     const [transactions, setTransactions] = useState([]);
 
-    const addTransaction = (transaction) => {
-        const tempTransactions = [transaction, ...transactions];
-        setTransactions(tempTransactions);
+    useEffect(() => {
+        getAllTransactions();
+    }, []);
+
+    const getAllTransactions = () => {
+        fetch('https://expense-tracker-api.appspot.com/api/getexpenses').then(data => {
+            setTransactions(data);
+        }).catch(err => {
+            console.error(`Error on adding transaction :: ${err}`)
+        })
+    }
+
+    const addTransaction = (transaction) => {        
+        fetch('https://expense-tracker-api.appspot.com/api/saveexpense', {
+            method: "post",
+            body: transaction
+        }).then(data => {
+            getAllTransactions();
+        }).catch(err => {
+            console.error(`Error on adding transaction :: ${err}`)
+        });
     };
 
     const deleteTransaction = (id) => {
-        const tempTransactions = transactions.filter(transaction => transaction.id !== id  );
-        setTransactions(tempTransactions);
+        fetch(`https://expense-tracker-api.appspot.com/api/deleteexpense?id=${id}`, {
+            method: "delete",
+        }).then(data => {
+            // getAllTransactions(); //or
+            const tempTransactions = transactions.filter(transaction => transaction.id !== id  );
+            setTransactions(tempTransactions);
+        }).catch(err => {
+            console.error(`Error on adding transaction :: ${err}`)
+        })
     };
 
     return (
