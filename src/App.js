@@ -16,7 +16,7 @@ const App = () => {
     }, []);
 
     const getAllTransactions = () => {
-        fetch('https://expense-tracker-api.appspot.com/api/getexpenses').then(data => {
+        fetch('https://your-firestore-api.com/api/getexpenses').then(data => {
             setTransactions(data);
         }).catch(err => {
             console.error(`Error on adding transaction :: ${err}`)
@@ -24,7 +24,7 @@ const App = () => {
     }
 
     const addTransaction = (transaction) => {        
-        fetch('https://expense-tracker-api.appspot.com/api/saveexpense', {
+        fetch('https://your-firestore-api.com/api/saveexpense', {
             method: "post",
             body: transaction
         }).then(data => {
@@ -35,12 +35,10 @@ const App = () => {
     };
 
     const deleteTransaction = (id) => {
-        fetch(`https://expense-tracker-api.appspot.com/api/deleteexpense?id=${id}`, {
+        fetch(`https://your-firestore-api.com/api/deleteexpense?id=${id}`, {
             method: "delete",
         }).then(data => {
-            // getAllTransactions(); //or
-            const tempTransactions = transactions.filter(transaction => transaction.id !== id  );
-            setTransactions(tempTransactions);
+            getAllTransactions();
         }).catch(err => {
             console.error(`Error on adding transaction :: ${err}`)
         })
